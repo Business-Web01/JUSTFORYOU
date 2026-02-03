@@ -10,10 +10,13 @@
             --envelope-color: #f06292;
             --flap-color: #e91e63;
             --red-accent: #d32f2f;
+            --nav-pink: #f06292;
         }
 
         body {
-            margin: 0; 
+            margin: 0;
+            /* Background Image */
+            background: url('e58e69a7882ab592c0f47879f91754c9.jpg'); 
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -21,84 +24,63 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        .main-nav {
-    width: 100%;
-    background: #f06292; /* Consistent Pink */
-    padding: 15px 0;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    overflow-x: auto; /* Allows horizontal scroll on very small phones */
-    white-space: nowrap;
-}
+        /* --- STICKY HEADER --- */
+        nav {
+            width: 100%;
+            background: var(--nav-pink);
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1000; /* Stays above everything */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            overflow-x: auto;
+            white-space: nowrap;
+        }
 
-.main-nav a {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    padding: 5px 10px;
-    transition: color 0.3s ease;
-}
-
-.main-nav a:hover {
-    color: #ffebee; /* Light pink hover effect */
-}
-
-/* Mobile Tweak: Ensure links don't get squashed */
-@media (max-width: 480px) {
-    .main-nav {
-        justify-content: flex-start; /* Aligns to left so user can scroll across */
-        padding-left: 15px;
-    }
-    .main-nav a {
-        font-size: 0.75rem;
-    }
-}
-
-.main-nav a.active {
-    border-bottom: 2px solid white;
-}
-
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            padding: 5px 10px;
+        }
 
         .instruction {
-            margin-bottom: 25px;
-            color: white; /* Changed to white to stand out against background */
+            margin: 40px 0 20px 0;
+            color: rgb(3, 3, 3);
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
             font-weight: bold;
             font-size: 1.4rem;
-            z-index: 5;
+            text-align: center;
         }
 
-        /* --- ENLARGED ENVELOPE --- */
+        /* --- ENVELOPE STYLING --- */
         .envelope-wrapper {
             position: relative;
             width: 95%;
-            max-width: 550px; /* Enlarge from 450px */
-            height: 350px;     /* Enlarge from 280px */
+            max-width: 550px;
+            height: 350px;
             background: var(--envelope-color);
             border-radius: 0 0 15px 15px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             cursor: pointer;
             perspective: 1500px;
+            margin-bottom: 50px;
         }
 
-        /* The Closed Flap - Adjusted for larger size */
         .flap {
             position: absolute;
             top: 0; left: 0;
             width: 0; height: 0;
-            border-left: 275px solid transparent; /* Half of 550 */
+            border-left: 275px solid transparent; 
             border-right: 275px solid transparent;
             border-top: 200px solid var(--flap-color);
             transform-origin: top;
@@ -106,16 +88,14 @@
             z-index: 10;
         }
 
-        /* The Heart Seal */
         .heart-seal {
             position: absolute;
-            top: 160px; /* Adjusted for larger flap */
+            top: 160px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 60px; /* Slightly larger */
+            font-size: 60px;
             z-index: 11;
             animation: wiggle 1.2s infinite;
-            transition: opacity 0.3s;
         }
 
         @keyframes wiggle {
@@ -124,13 +104,8 @@
             75% { transform: translateX(-50%) rotate(8deg); }
         }
 
-        .envelope-wrapper.open .flap {
-            transform: rotateX(180deg);
-            z-index: 0;
-        }
-        .envelope-wrapper.open .heart-seal {
-            opacity: 0;
-        }
+        .envelope-wrapper.open .flap { transform: rotateX(180deg); z-index: 0; }
+        .envelope-wrapper.open .heart-seal { opacity: 0; }
 
         /* --- LETTER MODAL --- */
         #letter-modal {
@@ -149,43 +124,44 @@
             width: 85%;
             max-width: 450px;
             min-height: 520px;
-            padding: 35px;
+            padding: 30px;
             border-radius: 12px;
             position: relative;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            border: 10px solid white;
+            border: 8px solid white;
             outline: 5px dashed var(--red-accent);
         }
 
-        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 30px; cursor: pointer; font-weight: bold; }
-        .page-text { font-size: 1.2rem; line-height: 1.7; color: #333; white-space: pre-wrap; }
+        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 30px; cursor: pointer; }
+        .page-text { font-size: 1.15rem; line-height: 1.6; color: #333; white-space: pre-wrap; }
         .nav-arrow { align-self: flex-end; font-size: 2.5rem; color: #f06292; cursor: pointer; }
 
         /* Rating & Alerts */
-        #rating-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); text-align: center; display: none; z-index: 3000; width: 85%; max-width: 350px; }
+        #rating-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 20px; text-align: center; display: none; z-index: 3000; width: 85%; max-width: 350px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
         .heart-star { font-size: 2.5rem; cursor: pointer; color: #ccc; }
         .heart-star.selected { color: var(--red-accent); }
-        .btn-action { background: var(--red-accent); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1rem; }
+        .btn-action { background: var(--red-accent); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 15px; }
 
-        .alert-box { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 30px; border-radius: 15px; color: white; font-weight: bold; display: none; z-index: 4000; text-align: center; width: 280px; font-size: 1.1rem; }
+        .alert-box { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 30px; border-radius: 15px; color: white; font-weight: bold; display: none; z-index: 4000; text-align: center; width: 280px; }
         .alert-red { background: #ff0000; animation: flashRed 0.5s infinite; }
         .alert-green { background: #2ecc71; animation: flashGreen 0.5s infinite; }
 
         @keyframes flashRed { 50% { opacity: 0.4; } }
         @keyframes flashGreen { 50% { opacity: 0.7; } }
 
-        /* --- MOBILE ADJUSTMENTS --- */
+        /* --- MOBILE RESPONSIVENESS --- */
         @media (max-width: 600px) {
-            .envelope-wrapper { height: 280px; }
+            .envelope-wrapper { height: 280px; margin-top: 20px; }
             .flap { 
                 border-left-width: 47.5vw; 
                 border-right-width: 47.5vw; 
-                border-top-width: 180px; 
+                border-top-width: 160px; 
             }
-            .heart-seal { top: 130px; font-size: 50px; }
-            .instruction { font-size: 1.1rem; }
+            .heart-seal { top: 110px; font-size: 50px; }
+            .letter-content { min-height: 450px; padding: 20px; }
+            nav { justify-content: flex-start; padding-left: 15px; }
         }
     </style>
 </head>
@@ -196,9 +172,8 @@
         <a href="love letter.html">Letter</a>
         <a href="puzzle.html">Puzzle</a>
         <a href="wordsearch.html">Word Search</a>
-        <a href="quiz.html">Things I Love About You</a>
-        <a href="song.html">SongForYou</a>
-        <a href="collage.html">Our Collage</a>
+        <a href="collage.html">Gallery</a>
+        <a href="song.html">Song</a>
     </nav>
 
     <div class="instruction">Tap the heart to open</div>
@@ -211,14 +186,14 @@
     <div id="letter-modal">
         <div class="letter-content">
             <span class="close-btn" onclick="closeLetter()">×</span>
-            <div style="font-weight: bold; color: var(--red-accent); margin-bottom: 15px; font-size: 1.1rem;">FROM: MBALZ<br>TO: MY VALENTINE (LEIGH)</div>
+            <div style="font-weight: bold; color: var(--red-accent); margin-bottom: 15px;">FROM: MBALZ<br>TO: LEIGH</div>
             <div id="letter-body" class="page-text"></div>
             <div id="next-arrow" class="nav-arrow" onclick="nextPage()">➔</div>
         </div>
     </div>
 
     <div id="rating-popup">
-        <h3>How much would you rate my letter?</h3>
+        <h3>Rate my letter?</h3>
         <div class="hearts-rating">
             <span class="heart-star" onclick="rate(1)">❤</span>
             <span class="heart-star" onclick="rate(2)">❤</span>
@@ -231,15 +206,15 @@
 
     <div id="alert-error" class="alert-box alert-red">Please try again! ❌</div>
     <div id="alert-success" class="alert-box alert-green">
-        ARGH! You are such a sweetheart i knew you loved my letter! ❤️<br><br>
-        <button class="btn-action" style="background:white; color:#2ecc71;" onclick="goToQuiz()">Next: The Quiz</button>
+        I knew you loved it! ❤️<br><br>
+        <button class="btn-action" style="background:white; color:#2ecc71;" onclick="goToPuzzle()">Next: The Puzzle</button>
     </div>
 
     <script>
         const pages = [
-            "My Dearest Leigh,\n\nI wanted to take this moment to tell you just how special you are to me. Meeting you was the best thing that ever happened...",
-            "Every laugh we share and every moment we spend together makes my life so much brighter. You truly are one of a kind.",
-            "I hope this Valentine's Day is just the beginning of many more beautiful memories together.\n\nLove always,\nMbalz"
+            "My Dearest Leigh,\n\nI wanted to take this moment to tell you just how special you are to me...",
+            "Every laugh we share makes my life so much brighter. You truly are one of a kind.",
+            "I hope this is just the beginning of many more beautiful memories.\n\nLove always,\nMbalz"
         ];
         
         let currentPage = 0;
@@ -287,7 +262,7 @@
             if (id === 'alert-error') setTimeout(() => el.style.display = 'none', 2000);
         }
 
-        function goToQuiz() { window.location.href = "quiz.html"; }
+        function goToPuzzle() { window.location.href = "puzzle.html"; }
 
         function spawnHearts(e) {
             const h = document.createElement('div');
