@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Puzzle</title>
+    <style>
+        :root { 
+            --red: #d32f2f; 
+            --pink: #f06292; 
+            --nav-pink: #f06292;
+        }
+
+        body {
+            margin: 0;
+            background: url('background2.jpg') center/cover fixed;
+            font-family: Arial, sans-serif;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- UPDATED STICKY NAV --- */
+        nav {
+            width: 100%;
+            background: var(--nav-pink);
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 2000; /* Stays above the puzzle and confetti */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        nav a { 
+            text-decoration: none; 
+            color: white; 
+            font-weight: bold; 
+            font-size: 0.8rem; 
+            text-transform: uppercase;
+            padding: 5px 10px;
+            flex-shrink: 0;
+        }
+
+        nav::-webkit-scrollbar { display: none; }
+
+        /* --- PUZZLE ELEMENTS --- */
+        .reference-box {
+            width: 150px; height: 150px;
+            border: 5px solid white; border-radius: 10px;
+            background: url('puzzle.jpg') center/cover;
+            margin: 20px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        #instruction { 
+            background: white; 
+            padding: 10px 20px; 
+            border-radius: 20px; 
+            color: var(--red); 
+            font-weight: bold; 
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .puzzle-board {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px; 
+            width: 90%; max-width: 400px;
+            background: rgba(255,255,255,0.2);
+            padding: 20px; border-radius: 15px; backdrop-filter: blur(5px);
+            margin-bottom: 80px; /* Space for the fixed next button */
+        }
+
+        .puzzle-piece {
+            aspect-ratio: 1/1;
+            background-image: url('puzzle.jpg');
+            background-size: 200% 400%;
+            border: 3px solid white; border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .puzzle-piece:active { transform: scale(0.95); }
+
+        #next-btn {
+            display: none;
+            position: fixed; bottom: 30px;
+            background: #2ecc71; color: white; padding: 15px 40px;
+            border-radius: 30px; border: none; font-weight: bold; font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 2500;
+        }
+        
+        .confetti { position: fixed; width: 10px; height: 10px; top: -10px; z-index: 4000; animation: fall linear forwards; }
+        
+        @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            nav { justify-content: flex-start; padding-left: 15px; }
+            .puzzle-board { width: 85%; gap: 10px; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="love letter.html">Letter</a>
+        <a href="puzzle.html">Puzzle</a>
+        <a href="word search.html">Word Search</a>
+        <a href="quiz.html">Things I Love</a>
+        <a href="song.html">Song</a>
+        <a href="collage.html">Gallery</a>
+    </nav>
+    
+    <div class="reference-box"></div>
+    <div id="instruction">Tap two pieces to swap them!</div>
+
+    <div class="puzzle-board" id="board"></div>
+
+    <button id="next-btn" onclick="window.location.href='wordsearch.html'">Next: Word Search</button>
+
+    <script>
+        const board = document.getElementById('board');
+        const correctOrder = [0, 1, 2, 3, 4, 5, 6, 7];
+        let currentOrder = [...correctOrder];
+        let firstSelection = null;
+
+        function init() {
+            // Shuffle until it's not solved
+            do { currentOrder.sort(() => Math.random() - 0.5); } while (isSolved());
+            render();
+        }
+
+        function render() {
+            board.innerHTML = '';
+            currentOrder.forEach((pos, i) => {
+                const piece = document.createElement('div');
+                piece.className = 'puzzle-piece';
+                const x = (pos % 2) * 100;
+                const y = Math.floor(pos / 2) * 33.3;
+                piece.style.backgroundPosition = `${x}% ${y}%`;
+                piece.onclick = () => handleTap(i);
+                if (firstSelection === i) piece.style.borderColor = "#ffeb3b";
+                board.appendChild(piece);
+            });
+        }
+
+        function handleTap(index) {
+            if (firstSelection === null) {
+                firstSelection = index;
+            } else {
+                const temp = currentOrder[firstSelection];
+                currentOrder[firstSelection] = currentOrder[index];
+                currentOrder[index] = temp;
+                firstSelection = null;
+                if (isSolved()) launchSuccess();
+            }
+            render();
+        }
+
+        function isSolved() { return JSON.stringify(currentOrder) === JSON.stringify(correctOrder); }
+
+        function launchSuccess() {
+            document.getElementById('instruction').innerText = "WELL DONE! ❤️";
+            document.getElementById('next-btn').style.display = 'block';
+            for (let i = 0; i < 100; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                c.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(c);
+            }
+        }
+        init();
+    </script>
+</body>
+</html>
