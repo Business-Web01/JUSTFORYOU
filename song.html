@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raindance Dedication</title>
+    <style>
+        :root {
+            --red-accent: #d32f2f;
+            --player-bg: #333;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('background3.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        nav {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a { text-decoration: none; color: var(--red-accent); font-weight: bold; text-transform: uppercase; font-size: 0.8rem; }
+
+        /* Smaller Player Frame */
+        .player-frame {
+            margin-top: 20px; /* Reduced margin */
+            width: 85%;
+            max-width: 320px; /* Smaller width */
+            background: var(--player-bg);
+            border-radius: 30px;
+            padding: 20px 15px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            text-align: center;
+            color: white;
+            z-index: 5;
+        }
+
+        .screen {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #intro-text, #countdown {
+            color: var(--red-accent);
+            font-size: 1.5rem;
+            font-weight: bold;
+            z-index: 10;
+            position: absolute;
+        }
+
+        .slideshow-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .slide.active { opacity: 1; }
+
+        /* The Play Button (Heart) - Scaled down */
+        .heart-btn {
+            width: 50px;
+            height: 50px;
+            background: var(--red-accent);
+            transform: rotate(-45deg);
+            cursor: pointer;
+            margin: 25px auto;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .heart-btn::before, .heart-btn::after {
+            content: "";
+            position: absolute;
+            width: 50px; height: 50px;
+            background: var(--red-accent);
+            border-radius: 50%;
+        }
+        .heart-btn::before { top: -25px; left: 0; }
+        .heart-btn::after { left: 25px; top: 0; }
+        .heart-btn:active { transform: rotate(-45deg) scale(0.9); }
+
+        /* Camera Flash Effect */
+        #flash-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 2000;
+        }
+
+        @keyframes flash-anim {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Floating Hearts & Pop Text remains the same */
+        .floating-heart {
+            position: absolute;
+            color: #ff1744;
+            pointer-events: none;
+            animation: floatUp 3s forwards;
+            z-index: 1000;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-120px); opacity: 0; }
+        }
+
+        .pop-text {
+            position: absolute;
+            color: var(--red-accent);
+            font-weight: bold;
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 10;
+            text-shadow: 1px 1px 2px white;
+            animation: fadeInOutPop 7s forwards;
+        }
+
+        @keyframes fadeInOutPop {
+            0% { opacity: 0; transform: scale(0.5); }
+            10% { opacity: 1; transform: scale(1); }
+            90% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(2); }
+        }
+    </style>
+</head>
+<body onclick="spawnHearts(event)">
+
+    <div id="flash-overlay"></div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="love letter.html">Letter</a>
+        <a href="puzzle.html">Puzzle</a>
+        <a href="quiz.html">Quiz</a>
+        <a href="song.html">Song</a>
+    </nav>
+
+    <div class="player-frame">
+        <div class="screen">
+            <div id="intro-text">Happy Valentine's Day</div>
+            <div id="countdown" style="display:none;"></div>
+            <div id="slideshow" class="slideshow-container">
+                <img src="img1.jpg" class="slide active">
+                <img src="img2.jpg" class="slide">
+                <img src="img3.jpg" class="slide">
+                <img src="img4.jpg" class="slide">
+                <img src="img5.jpg" class="slide">
+                <img src="img6.jpg" class="slide">
+                <img src="img7.jpg" class="slide">
+                <img src="img8.jpg" class="slide">
+                <img src="img9.jpg" class="slide">
+                <img src="img10.jpg" class="slide">
+            </div>
+        </div>
+
+        <div class="info">
+            <h3 style="margin: 0; font-size: 1.1rem;">Raindance</h3>
+            <p style="opacity: 0.7; font-size: 0.9rem; margin: 5px 0;">Dave, Tems</p>
+        </div>
+
+        <div class="heart-btn" id="play-trigger" onclick="startExperience()"></div>
+        <p id="hint-text" style="font-size: 0.7rem; opacity: 0.6;">Tap the heart to play your song</p>
+
+        <audio id="raindance-audio">
+            <source src="dave_raindance_ft._tems_mp3_3545.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        function triggerFlash() {
+            const flash = document.getElementById('flash-overlay');
+            flash.style.animation = 'none';
+            flash.offsetHeight; // trigger reflow
+            flash.style.animation = 'flash-anim 0.4s ease-out';
+        }
+
+        async function startExperience() {
+            const audio = document.getElementById('raindance-audio');
+            const intro = document.getElementById('intro-text');
+            const cdDisplay = document.getElementById('countdown');
+            const hint = document.getElementById('hint-text');
+            const trigger = document.getElementById('play-trigger');
+
+            // Play music immediately
+            audio.play().catch(e => console.log("Audio play failed: ", e));
+            
+            // Hide trigger elements
+            hint.style.opacity = '0';
+            trigger.style.pointerEvents = 'none';
+
+            // Start Countdown
+            intro.style.display = 'none';
+            cdDisplay.style.display = 'block';
+
+            for (let i = 3; i > 0; i--) {
+                cdDisplay.innerText = i;
+                triggerFlash();
+                await new Promise(r => setTimeout(r, 1000));
+            }
+
+            cdDisplay.style.display = 'none';
+            document.getElementById('slideshow').style.opacity = '1';
+            runSlideshow();
+        }
+
+        function runSlideshow() {
+            const slides = document.querySelectorAll('.slide');
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, 5000);
+        }
+
+        function createPopText() {
+            const messages = ["I love you!", "You are amazing!", "My Valentine"];
+            const p = document.createElement('div');
+            p.className = 'pop-text';
+            p.innerText = messages[Math.floor(Math.random() * messages.length)];
+            p.style.left = (Math.random() * 60 + 10) + "vw";
+            p.style.top = (Math.random() * 70 + 15) + "vh";
+            document.body.appendChild(p);
+            setTimeout(() => { p.remove(); createPopText(); }, 7000);
+        }
+
+        function spawnHearts(e) {
+            const h = document.createElement('div');
+            h.innerHTML = '❤️';
+            h.className = 'floating-heart';
+            h.style.left = e.clientX + 'px';
+            h.style.top = e.clientY + 'px';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 3000);
+        }
+
+        window.onload = () => { createPopText(); createPopText(); };
+    </script>
+</body>
+</html>

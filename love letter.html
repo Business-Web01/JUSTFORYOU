@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Love Letter</title>
+    <style>
+        :root {
+            --nav-pink: #f06292; 
+            --red-accent: #d32f2f;
+            --envelope-color: #f8bbd0;
+            --flap-color: #f48fb1;
+            --paper-white: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('background3.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: pointer;
+        }
+
+        /* Nav Bar */
+        nav {
+            width: 100%;
+            background: var(--nav-pink);
+            padding: 18px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        /* Floating Hearts Styling (Same as Index) */
+        .floating-heart {
+            position: absolute;
+            color: #ff1744;
+            font-size: 22px;
+            pointer-events: none;
+            z-index: 3000;
+            animation: floatUp 3s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-150px) scale(0); opacity: 0; }
+        }
+
+        .header-actions {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .view-full-btn {
+            padding: 14px 24px;
+            background: var(--red-accent);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            font-weight: bold;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            font-size: 0.8rem;
+        }
+
+        /* ENVELOPE AREA */
+        .envelope-wrapper {
+            position: relative;
+            margin-top: 60px;
+            width: 90%;
+            max-width: 500px;
+            aspect-ratio: 3 / 2;
+            perspective: 1500px;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: var(--envelope-color);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+
+        /* Flap */
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 5;
+            border-top: 150px solid var(--flap-color);
+            border-left: 250px solid transparent;
+            border-right: 250px solid transparent;
+            transform-origin: top;
+            transition: transform 0.7s;
+        }
+
+        @media (max-width: 500px) {
+            .envelope::before {
+                border-top-width: 30vw;
+                border-left-width: 45vw;
+                border-right-width: 45vw;
+            }
+        }
+
+        .envelope.open::before { transform: rotateX(180deg); z-index: 1; }
+
+        .heart-sticker {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 50px; height: 50px;
+            background: var(--red-accent);
+            transform: translate(-50%, -50%) rotate(-45deg);
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        .heart-sticker::before, .heart-sticker::after {
+            content: ""; position: absolute;
+            width: 50px; height: 50px;
+            background: var(--red-accent);
+            border-radius: 50%;
+        }
+        .heart-sticker::before { top: -25px; left: 0; }
+        .heart-sticker::after { left: 25px; top: 0; }
+
+        .vibrate { animation: pulse 0.8s infinite; }
+        @keyframes pulse { 50% { transform: translate(-50%, -50%) rotate(-45deg) scale(1.1); } }
+
+        /* The Letter Instruction - Centered Better */
+        .letter-content {
+            position: absolute;
+            bottom: 5%; left: 5%;
+            width: 90%; height: 85%;
+            background: var(--paper-white);
+            z-index: 3;
+            transition: transform 0.8s;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centers text vertically inside */
+            align-items: center;
+            text-align: center;
+        }
+
+        .envelope.open .letter-content { transform: translateY(-40%); z-index: 4; }
+
+        /* Modal / Full Letter */
+        #full-letter-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .letter-paper-full {
+            width: 85%;
+            max-width: 400px;
+            min-height: 450px;
+            background: #fff9f9;
+            padding: 40px 25px;
+            border: 3px solid var(--red-accent);
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .page-text { font-family: 'Courier New', monospace; font-size: 0.95rem; }
+
+        /* Pink Arrow for Pagination */
+        .next-arrow {
+            position: absolute;
+            bottom: 20px;
+            right: 25px;
+            font-size: 2rem;
+            color: var(--nav-pink);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .next-arrow:hover { transform: translateX(5px); }
+
+        .close-x {
+            position: absolute; top: 10px; right: 15px;
+            font-size: 30px; color: var(--nav-pink); cursor: pointer;
+        }
+    </style>
+</head>
+<body onclick="spawnHearts(event)">
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="love letter.html">Letter</a>
+        <a href="puzzle.html">Puzzle</a>
+        <a href="quiz.html">Quiz</a>
+        <a href="song.html">Song</a>
+    </nav>
+
+    <div class="header-actions">
+        <button class="view-full-btn" onclick="openModal(true)">VIEW LETTER IN FULL</button>
+    </div>
+
+    <div class="envelope-wrapper">
+        <div class="envelope" id="mainEnvelope">
+            <div class="letter-content">
+                <h2 style="color: var(--red-accent); margin-bottom: 5px;">A Love Letter</h2>
+                <p style="margin: 5px 0;">To: Mbalz</p>
+                <p style="font-size: 0.85rem; color: #555; background: #fff5f8; padding: 10px; border-radius: 5px;">
+                    Click "View Letter in Full" <br> to read my heart...
+                </p>
+            </div>
+            <div class="heart-sticker vibrate" id="seal" onclick="openLetter(event)"></div>
+        </div>
+    </div>
+
+    <div id="full-letter-modal">
+        <div class="letter-paper-full">
+            <span class="close-x" onclick="openModal(false)">&times;</span>
+            <div id="page1" class="page-text">
+                <h3 style="text-align: center; color: var(--red-accent);">PAGE 1</h3>
+                <p>My Dearest Mbalz,</p>
+                <p>Writing this feels like trying to put the stars in a box. You are the light in my life and the reason I smile at my phone like a fool.</p>
+                <p>Every moment spent with you is a treasure I hold close. I wanted to build this for you to show how much you mean to me...</p>
+                <div class="next-arrow" onclick="nextPage()">➔</div>
+            </div>
+            <div id="page2" class="page-text" style="display: none;">
+                <h3 style="text-align: center; color: var(--red-accent);">PAGE 2</h3>
+                <p>You're the person I want to talk to before I go to sleep and the person I want to wake up to every morning.</p>
+                <p>This little link is just a small piece of my heart for you. Thank you for being you.</p>
+                <p style="text-align: right; margin-top: 40px;">Forever Yours,<br>❤️</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openLetter(e) {
+            e.stopPropagation(); // Stop hearts from spawning on the seal click
+            const envelope = document.getElementById('mainEnvelope');
+            const seal = document.getElementById('seal');
+            envelope.classList.add('open');
+            seal.style.opacity = '0';
+            setTimeout(() => seal.style.display = 'none', 500);
+        }
+
+        function openModal(show) {
+            document.getElementById('full-letter-modal').style.display = show ? 'flex' : 'none';
+            // Reset to page 1 when opening
+            if(show) {
+                document.getElementById('page1').style.display = 'block';
+                document.getElementById('page2').style.display = 'none';
+            }
+        }
+
+        function nextPage() {
+            document.getElementById('page1').style.display = 'none';
+            document.getElementById('page2').style.display = 'block';
+        }
+
+        function spawnHearts(e) {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.className = 'floating-heart';
+            heart.style.left = e.clientX + 'px';
+            heart.style.top = e.clientY + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

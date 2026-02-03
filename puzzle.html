@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Valentine's Puzzle</title>
+    <style>
+        :root {
+            --red-accent: #d32f2f;
+            --pink-light: #fce4ec;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('background2.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            touch-action: none; /* Prevents scrolling while dragging pieces */
+        }
+
+        /* Nav Bar remains as requested */
+        nav {
+            width: 100%;
+            background: #f06292;
+            padding: 18px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        /* Reference Image Top Right */
+        .reference-box {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            border: 4px solid white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background-image: url('puzzle.jpg'); /* REPLACE THIS */
+            background-size: cover;
+            z-index: 100;
+        }
+
+        /* Puzzle Board */
+        .puzzle-board {
+            margin-top: 120px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 10px;
+            width: 90%;
+            max-width: 320px;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            border: 2px dashed white;
+        }
+
+        .puzzle-piece {
+            aspect-ratio: 1/1;
+            background-image: url('puzzle.jpg'); /* REPLACE THIS */
+            background-size: 200% 400%;
+            border-radius: 8px;
+            cursor: move;
+            touch-action: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 2px solid white;
+        }
+
+        /* Victory Pop-up */
+        #victory-popup {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 5000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            border: 4px solid var(--nav-pink);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .popup-content p {
+            color: var(--red-accent);
+            font-size: 1.2rem;
+            font-weight: bold;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .yes-btn {
+            background: var(--nav-pink);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Floating Hearts */
+        .floating-heart {
+            position: absolute;
+            color: #ff1744;
+            font-size: 22px;
+            pointer-events: none;
+            z-index: 3000;
+            animation: floatUp 3s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-150px) scale(0); opacity: 0; }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            z-index: 4000;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(720deg); }
+        }
+
+        #instruction {
+            color: var(--red-accent);
+            font-weight: bold;
+            margin-top: 15px;
+            text-align: center;
+            background: rgba(255,255,255,0.7);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body onclick="spawnHearts(event)">
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="love letter.html">Letter</a>
+        <a href="puzzle.html">Puzzle</a>
+        <a href="quiz.html">Quiz</a>
+        <a href="song.html">Song</a>
+    </nav>
+
+    <div class="reference-box"></div>
+    <div id="instruction">Drag pieces to solve!</div>
+
+    <div class="puzzle-board" id="board">
+
+        <div id="victory-popup">
+        <div class="popup-content">
+            <p>"Well Done! I knew you'd figure this out. Now do you see why you're my Valentine."</p>
+            <button class="yes-btn" onclick="closePopup()">Yes</button>
+        </div>
+        </div>
+
+    <script>
+        const board = document.getElementById('board');
+        const correctOrder = [0, 1, 2, 3, 4, 5, 6, 7];
+        let currentOrder = [...correctOrder];
+        let draggedItemIndex = null;
+
+        function init() {
+            // Shuffle
+            do {
+                currentOrder.sort(() => Math.random() - 0.5);
+            } while (isSolved());
+            render();
+        }
+
+        function render() {
+            board.innerHTML = '';
+            currentOrder.forEach((pos, i) => {
+                const piece = document.createElement('div');
+                piece.className = 'puzzle-piece';
+                piece.draggable = true;
+                
+                // Background positions for 2x4 grid
+                const x = (pos % 2) * 100;
+                const y = Math.floor(pos / 2) * 33.3;
+                piece.style.backgroundPosition = `${x}% ${y}%`;
+                
+                // Desktop Drag
+                piece.addEventListener('dragstart', () => draggedItemIndex = i);
+                piece.addEventListener('dragover', e => e.preventDefault());
+                piece.addEventListener('drop', () => swap(i));
+
+                // Mobile Touch Support
+                piece.addEventListener('touchstart', (e) => {
+                    draggedItemIndex = i;
+                    piece.style.opacity = "0.5";
+                });
+                piece.addEventListener('touchend', (e) => {
+                    piece.style.opacity = "1";
+                    const touch = e.changedTouches[0];
+                    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                    if (target && target.className === 'puzzle-piece') {
+                        // Find index of piece at touch end location
+                        const targetIndex = Array.from(board.children).indexOf(target);
+                        swap(targetIndex);
+                    }
+                });
+
+                board.appendChild(piece);
+            });
+        }
+
+        function swap(targetIndex) {
+            if (draggedItemIndex === null) return;
+            const temp = currentOrder[draggedItemIndex];
+            currentOrder[draggedItemIndex] = currentOrder[targetIndex];
+            currentOrder[targetIndex] = temp;
+            draggedItemIndex = null;
+            render();
+            if (isSolved()) launchConfetti();
+        }
+
+        function isSolved() {
+            return JSON.stringify(currentOrder) === JSON.stringify(correctOrder);
+        }
+
+        function launchConfetti() {
+            document.getElementById('instruction').innerText = "YOU DID IT! ❤️";
+            for (let i = 0; i < 100; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                c.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(c);
+            }
+        }
+
+        function spawnHearts(e) {
+            const h = document.createElement('div');
+            h.innerHTML = '❤️';
+            h.className = 'floating-heart';
+            h.style.left = e.clientX + 'px';
+            h.style.top = e.clientY + 'px';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 3000);
+        }
+
+        init();
+    </script>
+</body>
+</html>
